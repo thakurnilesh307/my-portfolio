@@ -4,7 +4,7 @@ import { getNowItems, getLogEntries } from '../../../lib/notion'
 export default async function NowDetail({ params }: { params: any }) {
   const { id } = await params
   const nowItems = await getNowItems()
-  const item = nowItems.find((i: any) => i.id === id)
+  const item = nowItems.find((i: any) => i.id === id) as any
   const logs = await getLogEntries(id)
 
   if (!item) return <div>Not found</div>
