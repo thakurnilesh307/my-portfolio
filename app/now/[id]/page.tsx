@@ -17,11 +17,13 @@ export default async function NowDetail({ params }: { params: any }) {
 
   if (!item) return <div>Not found</div>
 
-  const props = item.properties
-  const name = props.Name?.title?.[0]?.plain_text ?? 'Untitled'
-  const tagline = props.Tagline?.rich_text?.[0]?.plain_text ?? ''
-  const category = props.Category?.select?.name ?? ''
-  const progress = props.Progress?.number ?? 0
+  const props       = item.properties
+  const name        = props.Name?.title?.[0]?.plain_text ?? 'Untitled'
+  const tagline     = props.Tagline?.rich_text?.[0]?.plain_text ?? ''
+  const description = props.Description?.rich_text?.[0]?.plain_text ?? ''
+  const category    = props.Category?.select?.name ?? ''
+  const progress    = props.Progress?.number ?? 0
+  const started     = props.Started?.date?.start ?? ''
 
   const catColors: any = {
     engineering: { bg: '#E1F5EE', color: '#0F6E56' },
@@ -69,11 +71,15 @@ export default async function NowDetail({ params }: { params: any }) {
             }}>{category}</span>
           </div>
           <h1 style={{ fontSize: '22px', fontWeight: 500, marginBottom: '6px', lineHeight: 1.3 }}>{name}</h1>
-          <p style={{ fontSize: '14px', color: 'var(--fg-muted)', lineHeight: 1.6, marginBottom: '1.25rem' }}>{tagline}</p>
+          <p style={{ fontSize: '14px', color: 'var(--fg-muted)', lineHeight: 1.6, marginBottom: tagline && description ? '0.5rem' : '1.25rem' }}>{tagline}</p>
+          {description && (
+            <p style={{ fontSize: '13px', color: 'var(--fg-faint)', lineHeight: 1.7, marginBottom: '1.25rem' }}>{description}</p>
+          )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '1rem' }}>
             {[
               { label: 'progress', value: `${Math.round(progress * 100)}%` },
+              { label: 'started', value: started ? new Date(started).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—' },
               { label: 'wins', value: logs.filter((l: any) => l.properties.Type?.select?.name === 'win').length },
               { label: 'struggles', value: logs.filter((l: any) => l.properties.Type?.select?.name === 'struggle').length },
             ].map(stat => (

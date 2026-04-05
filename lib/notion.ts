@@ -15,6 +15,17 @@ export async function getProjects() {
   return res.results
 }
 
+export async function getAllProjects() {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('projects')
+  const res = await notion.databases.query({
+    database_id: process.env.NOTION_PROJECTS_DB,
+    sorts: [{ property: 'Date', direction: 'descending' }],
+  })
+  return res.results
+}
+
 export async function getNowItems() {
   'use cache'
   cacheLife('minutes')
@@ -34,6 +45,18 @@ export async function getLogEntries(nowItemId: string) {
     database_id: process.env.NOTION_LOG_DB,
     filter: { property: 'Now Item', relation: { contains: nowItemId } },
     sorts: [{ property: 'Date', direction: 'descending' }],
+  })
+  return res.results
+}
+
+export async function getRecentActivity(limit = 8) {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('logs')
+  const res = await notion.databases.query({
+    database_id: process.env.NOTION_LOG_DB,
+    sorts: [{ property: 'Date', direction: 'descending' }],
+    page_size: limit,
   })
   return res.results
 }
